@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Runtimer.iml" filepath="$PROJECT_DIR$/Runtimer.iml" />
       <module fileurl="file://$PROJECT_DIR$/StopWatch.iml" filepath="$PROJECT_DIR$/StopWatch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

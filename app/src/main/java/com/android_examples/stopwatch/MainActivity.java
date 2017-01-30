@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
+    // Talal comment test
     TextView textView ;
 
     Button start, pause, reset, lap ;
