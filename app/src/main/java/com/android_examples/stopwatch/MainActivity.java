@@ -8,6 +8,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Handler;
+
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -37,14 +42,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = (TextView)findViewById(R.id.textView);
-        start = (Button)findViewById(R.id.button);
-        pause = (Button)findViewById(R.id.button2);
-        reset = (Button)findViewById(R.id.button3);
-        lap = (Button)findViewById(R.id.button4) ;
-        listView = (ListView)findViewById(R.id.listview1);
+        textView = (TextView) findViewById(R.id.textView);
+        start = (Button) findViewById(R.id.button);
+        pause = (Button) findViewById(R.id.button2);
+        reset = (Button) findViewById(R.id.button3);
+        lap = (Button) findViewById(R.id.button4);
+        listView = (ListView) findViewById(R.id.listview1);
 
-        handler = new Handler() ;
+        handler = new Handler();
 
         ListElementsArrayList = new ArrayList<String>(Arrays.asList(ListElements));
 
@@ -63,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(runnable, 0);
 
                 reset.setEnabled(false);
+
+
+
 
             }
         });
@@ -84,13 +92,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                MillisecondTime = 0L ;
-                StartTime = 0L ;
-                TimeBuff = 0L ;
-                UpdateTime = 0L ;
-                Seconds = 0 ;
-                Minutes = 0 ;
-                MilliSeconds = 0 ;
+                MillisecondTime = 0L;
+                StartTime = 0L;
+                TimeBuff = 0L;
+                UpdateTime = 0L;
+                Seconds = 0;
+                Minutes = 0;
+                MilliSeconds = 0;
 
                 textView.setText("00:00:00");
 
@@ -107,6 +115,13 @@ public class MainActivity extends AppCompatActivity {
                 ListElementsArrayList.add(textView.getText().toString());
 
                 adapter.notifyDataSetChanged();
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("/5kRace/53/Time");
+
+                myRef.setValue("" + Minutes + ":"
+                        + String.format("%02d", Seconds) + ":"
+                        + String.format("%03d", MilliSeconds));
 
             }
         });
@@ -134,6 +149,9 @@ public class MainActivity extends AppCompatActivity {
                     + String.format("%03d", MilliSeconds));
 
             handler.postDelayed(this, 0);
+
+
+
         }
 
     };
