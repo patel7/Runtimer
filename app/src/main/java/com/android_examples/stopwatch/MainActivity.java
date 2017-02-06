@@ -126,13 +126,6 @@ public class MainActivity extends AppCompatActivity {
 
                 adapter.notifyDataSetChanged();
 
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("/5kRace/53/Time");
-
-                myRef.setValue("" + Minutes + ":"
-                        + String.format("%02d", Seconds) + ":"
-                        + String.format("%03d", MilliSeconds));
-
             }
         });
 
@@ -160,6 +153,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String idInput = input.getText().toString();
                 System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("/5kRace/" + idInput + "/Time");
+
+                myRef.setValue("" + timeTapped);
             }
         });
 
