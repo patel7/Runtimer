@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference("/5kRace/" + idInput + "/Time");
 
-                myRef.setValue("" + timeTapped);
+                myRef.setValue(ListElementsArrayList.get(timeTapped));
             }
         });
 
