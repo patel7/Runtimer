@@ -1,10 +1,15 @@
 package com.android_examples.stopwatch;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Handler;
@@ -116,6 +121,41 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Test to ensure correct
+                // System.out.println(ListElementsArrayList.get(position));
+                showAlert(position);
+
+            }
+        });
+
+    }
+
+    public void showAlert(final int timeTapped) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Input ID");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        alert.setView(input);
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String idInput = input.getText().toString();
+                System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        alert.show();
     }
 
     public Runnable runnable = new Runnable() {
