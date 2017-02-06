@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(runnable, 0);
 
                 reset.setEnabled(false);
+                start.setEnabled(false);
+                pause.setEnabled(true);
 
             }
         });
@@ -77,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
                 handler.removeCallbacks(runnable);
 
                 reset.setEnabled(true);
+                start.setEnabled(true);
+                pause.setEnabled(false);
 
             }
         });
