@@ -155,9 +155,16 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
 
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
+                
                 DatabaseReference myRef = database.getReference("/5kRace/" + idInput + "/Time");
-
                 myRef.setValue(ListElementsArrayList.get(timeTapped));
+
+                myRef = database.getReference("/5kRace/" + idInput + "/ID");
+                myRef.setValue("" + idInput);
+
+                myRef = database.getReference("/5kRace/" + idInput + "/Name");
+                myRef.setValue("");
+
             }
         });
 
