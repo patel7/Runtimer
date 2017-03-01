@@ -25,6 +25,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     // Talal comment test
     // Ryan comment test
+    // Ryan comment test 2
     TextView textView ;
 
     Button start, pause, reset, lap ;
