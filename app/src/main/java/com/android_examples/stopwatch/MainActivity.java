@@ -154,10 +154,18 @@ public class MainActivity extends AppCompatActivity {
                 String idInput = input.getText().toString();
                 System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
 
+                // Upload to database
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("/5kRace/" + idInput + "/Time");
+                DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "5kRace/" + "5kID/" + idInput + "/Time");
 
-                myRef.setValue(ListElementsArrayList.get(timeTapped));
+                myRef.setValue("" + ListElementsArrayList.get(timeTapped));
+
+
+                myRef = database.getReference("/Year/" + "2016/" + "5kRace/" + "5kID/" + idInput + "/ID");
+                myRef.setValue("" + idInput);
+
+                myRef = database.getReference("/Year/" + "2016/" + "5kRace/" + "5kID/" + idInput + "/Name");
+                myRef.setValue("Name " + idInput);
             }
         });
 
