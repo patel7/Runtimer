@@ -1,5 +1,6 @@
 package com.android_examples.stopwatch;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
@@ -15,6 +16,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Handler;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,25 +34,30 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     // Talal comment test
     // Ryan comment test
-    TextView textView ;
+    TextView textView;
 
-    Button start, pause, reset, lap ;
+    Button start, pause, reset, lap;
 
-    long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L ;
+    long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L;
 
     Handler handler;
 
-    int Seconds, Minutes, MilliSeconds ;
+    int Seconds, Minutes, MilliSeconds;
 
-    ListView listView ;
+    ListView listView;
 
-    String[] ListElements = new String[] {  };
+    String[] ListElements = new String[]{};
 
-    List<String> ListElementsArrayList ;
+    List<String> ListElementsArrayList;
 
-    ArrayAdapter<String> adapter ;
+    ArrayAdapter<String> adapter;
 
     boolean alreadyExists;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +96,6 @@ public class MainActivity extends AppCompatActivity {
                 reset.setEnabled(false);
                 start.setEnabled(false);
                 pause.setEnabled(true);
-
-
 
 
             }
@@ -149,7 +157,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
+
+
 
     public void showAlert(final int timeTapped) {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -161,39 +174,43 @@ public class MainActivity extends AppCompatActivity {
         alert.setPositiveButton("10K", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String idInput = input.getText().toString();
+                final String idInput = input.getText().toString();
 
                 // Console print for testing, to be removed
                 System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
 
-                // Upload to database
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput);
+                // DatabaseReference listenRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput);
+                DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
 
                 alreadyExists = false;
-                myRef.addValueEventListener(new ValueEventListener() {
+                ValueEventListener checkDupe = new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
-                        if(snapshot.exists()) {
+                        System.out.println("Value is: " + snapshot.getValue());
+                        if (snapshot.exists()) {
                             alreadyExists = true;
                         }
                     }
 
                     public void onCancelled(DatabaseError error) {
                     }
-                });
+                };
 
-                if(alreadyExists) {
+                myRef.addValueEventListener(checkDupe);
+
+                myRef.setValue("" + idInput);
+
+
+
+                if (alreadyExists) {
                     System.out.println("ID Number " + idInput + " already exists!");
                 } else {
+                    System.out.println("ID Number " + idInput + " doesn't exist!");
                     myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
                     myRef.setValue("" + ListElementsArrayList.get(timeTapped));
 
-
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
-                    myRef.setValue("" + idInput);
-
-                    myRef = database.getReference("/Year/" + "2016/" +"ID/" + idInput + "/Name");
+                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
                     myRef.setValue("Name " + idInput);
 
                     myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
@@ -252,9 +269,43 @@ public class MainActivity extends AppCompatActivity {
             handler.postDelayed(this, 0);
 
 
-
         }
 
     };
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
 }
