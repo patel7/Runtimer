@@ -166,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
 
                 myRef = database.getReference("/Year/" + "2016/" + "5kRace/" + "5kID/" + idInput + "/Name");
                 myRef.setValue("Name " + idInput);
-
             }
         });
 
