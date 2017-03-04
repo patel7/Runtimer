@@ -59,6 +59,10 @@ public class MainActivity extends AppCompatActivity {
 
         ListElementsArrayList = new ArrayList<String>(Arrays.asList(ListElements));
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "ID/0");
+        myRef.setValue(null);
+
         adapter = new ArrayAdapter<String>(MainActivity.this,
                 android.R.layout.simple_list_item_1,
                 ListElementsArrayList
@@ -156,16 +160,19 @@ public class MainActivity extends AppCompatActivity {
 
                 // Upload to database
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "10kRace/" + "10kID/" + idInput + "/Time");
+                DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
 
                 myRef.setValue("" + ListElementsArrayList.get(timeTapped));
 
 
-                myRef = database.getReference("/Year/" + "2016/" + "10kRace/" + "10kID/" + idInput + "/ID");
+                myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
                 myRef.setValue("" + idInput);
 
-                myRef = database.getReference("/Year/" + "2016/" + "10kRace/" + "10kID/" + idInput + "/Name");
+                myRef = database.getReference("/Year/" + "2016/" +"ID/" + idInput + "/Name");
                 myRef.setValue("Name " + idInput);
+
+                myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
+                myRef.setValue("10kRace");
             }
         });
 
@@ -176,16 +183,19 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
 
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "5kRace/" + "5kID/" + idInput + "/Time");
+                DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
 
                 myRef.setValue("" + ListElementsArrayList.get(timeTapped));
 
 
-                myRef = database.getReference("/Year/" + "2016/" + "5kRace/" + "5kID/" + idInput + "/ID");
+                myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
                 myRef.setValue("" + idInput);
 
-                myRef = database.getReference("/Year/" + "2016/" + "5kRace/" + "5kID/" + idInput + "/Name");
+                myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
                 myRef.setValue("Name " + idInput);
+
+                myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
+                myRef.setValue("5kRace");
             }
         });
 
