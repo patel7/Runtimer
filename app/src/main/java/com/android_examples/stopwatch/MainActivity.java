@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,8 +16,11 @@ import android.widget.TextView;
 import android.os.Handler;
 
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> ListElementsArrayList ;
 
     ArrayAdapter<String> adapter ;
+
+    boolean alreadyExists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,23 +162,44 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String idInput = input.getText().toString();
+
+                // Console print for testing, to be removed
                 System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
 
                 // Upload to database
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
+                DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput);
 
-                myRef.setValue("" + ListElementsArrayList.get(timeTapped));
+                alreadyExists = false;
+                myRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if(snapshot.exists()) {
+                            alreadyExists = true;
+                        }
+                    }
+
+                    public void onCancelled(DatabaseError error) {
+                    }
+                });
+
+                if(alreadyExists) {
+                    System.out.println("ID Number " + idInput + " already exists!");
+                } else {
+                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
+                    myRef.setValue("" + ListElementsArrayList.get(timeTapped));
 
 
-                myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
-                myRef.setValue("" + idInput);
+                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
+                    myRef.setValue("" + idInput);
 
-                myRef = database.getReference("/Year/" + "2016/" +"ID/" + idInput + "/Name");
-                myRef.setValue("Name " + idInput);
+                    myRef = database.getReference("/Year/" + "2016/" +"ID/" + idInput + "/Name");
+                    myRef.setValue("Name " + idInput);
 
-                myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
-                myRef.setValue("10kRace");
+                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
+                    myRef.setValue("10kRace");
+                }
+
             }
         });
 
