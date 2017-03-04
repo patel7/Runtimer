@@ -148,13 +148,33 @@ public class MainActivity extends AppCompatActivity {
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
         alert.setView(input);
 
-        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton("10K", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String idInput = input.getText().toString();
                 System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
 
                 // Upload to database
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "10kRace/" + "10kID/" + idInput + "/Time");
+
+                myRef.setValue("" + ListElementsArrayList.get(timeTapped));
+
+
+                myRef = database.getReference("/Year/" + "2016/" + "10kRace/" + "10kID/" + idInput + "/ID");
+                myRef.setValue("" + idInput);
+
+                myRef = database.getReference("/Year/" + "2016/" + "10kRace/" + "10kID/" + idInput + "/Name");
+                myRef.setValue("Name " + idInput);
+            }
+        });
+
+        alert.setNegativeButton("5K", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String idInput = input.getText().toString();
+                System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
+
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "5kRace/" + "5kID/" + idInput + "/Time");
 
@@ -166,13 +186,6 @@ public class MainActivity extends AppCompatActivity {
 
                 myRef = database.getReference("/Year/" + "2016/" + "5kRace/" + "5kID/" + idInput + "/Name");
                 myRef.setValue("Name " + idInput);
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // dialog.cancel();
             }
         });
 
