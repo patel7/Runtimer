@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 final String nameInput = input.getText().toString();
                 name = nameInput;
-                if(name == null) {
+                if(name.isEmpty()) {
                     nameEmpty();
                 } else {
                     showAlert(timeTapped);
@@ -195,53 +195,48 @@ public class MainActivity extends AppCompatActivity {
 
                 final String idInput = input.getText().toString();
 
-                boolean wasSent;
-                if(ListElementsArrayList.get(timeTapped).contains("✓")) {
-                    String newTime = ListElementsArrayList.get(timeTapped).substring(0,ListElementsArrayList.get(timeTapped).length() - 3);
-                    ListElementsArrayList.set(timeTapped,newTime);
-                    wasSent = true;
+                if(idInput.isEmpty()) {
+                    idEmpty();
                 } else {
-                    wasSent = false;
-                }
+                    boolean wasSent;
+                    if(ListElementsArrayList.get(timeTapped).contains("✓")) {
+                        String newTime = ListElementsArrayList.get(timeTapped).substring(0,ListElementsArrayList.get(timeTapped).length() - 3);
+                        ListElementsArrayList.set(timeTapped,newTime);
+                        wasSent = true;
+                    } else {
+                        wasSent = false;
+                    }
 
-                // Console print for testing, to be removed
-                System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef = database.getReference("/Year/" + "2016/");
+                    System.out.println("THE KEY IS: " + myRef.getDatabase().getReference().child("ID/").getKey());
 
-                DatabaseReference myRef = database.getReference("/Year/" + "2016/");
-                System.out.println("THE KEY IS: " + myRef.getDatabase().getReference().child("ID/").getKey());
+                    alreadyExists = false;
 
-                alreadyExists = false;
+                    if (ids.contains("ID=" + idInput + ",")) {
 
-                if (ids.contains("ID=" + idInput + ",")) {
-                    // Show a toast indicating that a duplicate ID was entered
-                    duplicateIDToast();
+                        duplicateIDToast();
 
-                    System.out.println("THE ID ALREADY EXISTS BRO.");
-                    alreadyExists = true;
-                }
-                else {
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
-                    myRef.setValue("" + idInput);
+                        if(wasSent) {
+                            checkMark(timeTapped);
+                        }
+                    } else {
+                        myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
+                        myRef.setValue("" + idInput);
 
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
-                    myRef.setValue("00" + ListElementsArrayList.get(timeTapped));
+                        myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
+                        myRef.setValue("00" + ListElementsArrayList.get(timeTapped));
 
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
-                    myRef.setValue(name);
+                        myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
+                        myRef.setValue(name);
 
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
-                    myRef.setValue("10kRace");
+                        myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
+                        myRef.setValue("10kRace");
 
-                    ids += "ID=" + idInput + ",";
-                    System.out.println("THE IDS IS: " + ids);
-                }
-
-                if(wasSent) {
-                    String newTime = ListElementsArrayList.get(timeTapped) + "  ✓";
-                    ListElementsArrayList.set(timeTapped, newTime);
-                    adapter.notifyDataSetChanged();
+                        ids += "ID=" + idInput + ",";
+                        checkMark(timeTapped);
+                    }
                 }
             }
         });
@@ -252,57 +247,60 @@ public class MainActivity extends AppCompatActivity {
 
                 final String idInput = input.getText().toString();
 
-                boolean wasSent;
-                if(ListElementsArrayList.get(timeTapped).contains("✓")) {
-                    String newTime = ListElementsArrayList.get(timeTapped).substring(0,ListElementsArrayList.get(timeTapped).length() - 3);
-                    ListElementsArrayList.set(timeTapped,newTime);
-                    wasSent = true;
+                if(idInput.isEmpty()) {
+                    idEmpty();
+                    dialog.cancel();
                 } else {
-                    wasSent = false;
+                    boolean wasSent;
+                    if(ListElementsArrayList.get(timeTapped).contains("✓")) {
+                        String newTime = ListElementsArrayList.get(timeTapped).substring(0,ListElementsArrayList.get(timeTapped).length() - 3);
+                        ListElementsArrayList.set(timeTapped,newTime);
+                        wasSent = true;
+                    } else {
+                        wasSent = false;
+                    }
+
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+                    DatabaseReference myRef = database.getReference("/Year/" + "2016/");
+                    System.out.println("THE KEY IS: " + myRef.getDatabase().getReference().child("ID/").getKey());
+
+                    alreadyExists = false;
+
+                    if (ids.contains("ID=" + idInput + ",")) {
+                        duplicateIDToast();
+
+                        if(wasSent) {
+                            checkMark(timeTapped);
+                        }
+                    } else {
+                        myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
+                        myRef.setValue("" + idInput);
+
+                        myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
+                        myRef.setValue("00" + ListElementsArrayList.get(timeTapped));
+
+                        myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
+                        myRef.setValue(name);
+
+                        myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
+                        myRef.setValue("5kRace");
+
+                        ids += "ID=" + idInput + ",";
+                        checkMark(timeTapped);
+                    }
                 }
 
-                // Console print for testing, to be removed
-                System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
 
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-                DatabaseReference myRef = database.getReference("/Year/" + "2016/");
-                System.out.println("THE KEY IS: " + myRef.getDatabase().getReference().child("ID/").getKey());
-
-                alreadyExists = false;
-
-                if (ids.contains("ID=" + idInput + ","))
-                {
-                    duplicateIDToast();
-
-                    System.out.println("THE ID ALREADY EXISTS BRO.");
-                    alreadyExists = true;
-                }
-                else
-                {
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
-                    myRef.setValue("" + idInput);
-
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
-                    myRef.setValue("00" + ListElementsArrayList.get(timeTapped));
-
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
-                    myRef.setValue(name);
-
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
-                    myRef.setValue("5kRace");
-
-                    ids += "ID=" + idInput + ",";
-                    System.out.println("THE IDS IS: " + ids);
-                }
-                if(wasSent) {
-                    String newTime = ListElementsArrayList.get(timeTapped) + "  ✓";
-                    ListElementsArrayList.set(timeTapped, newTime);
-                    adapter.notifyDataSetChanged();
-                }
             }
         });
         alert.show();
+    }
+
+    public void checkMark(int timeTapped) {
+        String newTime = ListElementsArrayList.get(timeTapped) + "  ✓";
+        ListElementsArrayList.set(timeTapped, newTime);
+        adapter.notifyDataSetChanged();
     }
 
     public void duplicateIDToast() {
@@ -315,6 +313,13 @@ public class MainActivity extends AppCompatActivity {
     public void nameEmpty() {
         Context context = getApplicationContext();
         CharSequence text = "Name cannot be empty";
+        int duration = Toast.LENGTH_SHORT;
+        Toast.makeText(context, text, duration).show();
+    }
+
+    public void idEmpty() {
+        Context context = getApplicationContext();
+        CharSequence text = "ID cannot be empty";
         int duration = Toast.LENGTH_SHORT;
         Toast.makeText(context, text, duration).show();
     }
