@@ -260,7 +260,11 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println("THE VALUE IS: " + dataSnapshot.getValue());
                         if (ids.contains("ID=" + idInput + ","))
                         {
-                            // do popup here
+                            Context context = getApplicationContext();
+                            CharSequence text = "ID already entered";
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast.makeText(context, text, duration).show();
+
                             System.out.println("THE ID ALREADY EXISTS BRO.");
                             alreadyExists = true;
 
