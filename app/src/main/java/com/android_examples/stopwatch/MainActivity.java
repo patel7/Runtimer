@@ -1,4 +1,5 @@
 package com.android_examples.stopwatch;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Handler;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -32,8 +34,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    // Talal comment test
-    // Ryan comment test
+
     TextView textView;
 
     Button start, pause, reset, lap;
@@ -77,12 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
         ListElementsArrayList = new ArrayList<String>(Arrays.asList(ListElements));
 
-
-        /*
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "ID/0");
-        myRef.setValue("null");
-*/
         adapter = new ArrayAdapter<String>(MainActivity.this,
                 android.R.layout.simple_list_item_1,
                 ListElementsArrayList
@@ -191,16 +186,19 @@ public class MainActivity extends AppCompatActivity {
 
                 alreadyExists = false;
 
-
-
-               // dummyRef.setValue("dummy value");
                 myRef.child("ID/").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         System.out.println("THE VALUE IS: " + dataSnapshot.getValue());
                         if (ids.contains("ID=" + idInput + ","))
                         {
-                            // do popup here
+
+                            // Show a toast indicating that a duplicate ID was entered
+                            Context context = getApplicationContext();
+                            CharSequence text = "ID already entered";
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast.makeText(context, text, duration).show();
+
                             System.out.println("THE ID ALREADY EXISTS BRO.");
                             alreadyExists = true;
 
@@ -235,42 +233,6 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-
-
-
-                /*
-                ValueEventListener checkDupe = new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        System.out.println("Value is: " + snapshot.getValue());
-                       // System.out.println(snapshot.getValue())
-                    }
-
-                    public void onCancelled(DatabaseError error) {
-                    }
-                };
-
-                myRef.addValueEventListener(checkDupe);
-
-*/
-
-
-/*
-                if (ids.contains("ID=" + idInput + ","))
-                    alreadyExists = true;
-                else {
-                    alreadyExists = false;
-                    ids += "ID=" + idInput + ",";
-                    System.out.println("THE ids IS: " + ids);
-                }
-
-
-                if (alreadyExists) {
-                    System.out.println("ID Number " + idInput + " already exists!");
-                } else {
-
-                }
-*/
             }
         });
 
@@ -290,10 +252,6 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("THE KEY IS: " + myRef.getDatabase().getReference().child("ID/").getKey());
 
                 alreadyExists = false;
-
-
-
-                // dummyRef.setValue("dummy value");
 
                 myRef.child("ID/").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -338,64 +296,6 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-
-                /*
-                final String idInput = input.getText().toString();
-
-                // Console print for testing, to be removed
-                System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
-
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                // DatabaseReference listenRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput);
-                DatabaseReference myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
-
-                alreadyExists = false;
-                /*
-                ValueEventListener checkDupe = new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        System.out.println("Value is: " + snapshot.getValue());
-                        if (snapshot.exists()) {
-                            alreadyExists = true;
-                        }
-                    }
-
-                    public void onCancelled(DatabaseError error) {
-                    }
-                };
-
-                myRef.addValueEventListener(checkDupe);
-
-
-
-
-
-                if (ids.contains(idInput + ","))
-                    alreadyExists = true;
-                else {
-                    alreadyExists = false;
-                   //ids += idInput + ",";
-                }
-
-
-                if (alreadyExists) {
-                    System.out.println("ID Number " + idInput + " already exists!");
-                } else {
-                    System.out.println("ID Number " + idInput + " doesn't exist!");
-
-                    myRef.setValue("" + idInput);
-
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
-                    myRef.setValue("00" + ListElementsArrayList.get(timeTapped));
-
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
-                    myRef.setValue("Name " + idInput);
-
-                    myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
-                    myRef.setValue("5kRace");
-                }
-
-                */
             }
         });
 
