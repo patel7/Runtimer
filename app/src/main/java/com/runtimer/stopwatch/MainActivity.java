@@ -31,20 +31,22 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Fields for displaying the current time (stopwatch)
     TextView textView;
     Button start, pause, reset, lap;
     long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L;
     Handler handler;
     int Seconds, Minutes, MilliSeconds;
 
+    // Fields for the list of times
     ListView listView;
     String[] ListElements = new String[]{};
-
-    String ids = "";
-    String name;
-
     List<String> ListElementsArrayList;
     ArrayAdapter<String> adapter;
+
+    // Fields for temporary storage
+    String ids = "";
+    String name;
 
     boolean alreadyExists;
     /**
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Set up views for buttons, timer, and list of times
         textView = (TextView) findViewById(R.id.textView);
         start = (Button) findViewById(R.id.button);
         pause = (Button) findViewById(R.id.button2);
@@ -67,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         handler = new Handler();
 
+        // Initialize list of stored times and adapter for displaying them
         ListElementsArrayList = new ArrayList<String>(Arrays.asList(ListElements));
 
         adapter = new ArrayAdapter<String>(MainActivity.this,
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         listView.setAdapter(adapter);
 
+        // Start button listener; disables start and reset buttons, enables pause button
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Pause button listener; disables pause button, re-enables other two buttons
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Reset button listener; doesn't change which buttons are enabled
+        // Resets timer, clears list of times
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Record time or "lap" button listener; adds a time to the list of times
         lap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Listener for the list of times itself, so that if one is tapped we can send that time
+        // to database.  Refers to the time that was tapped by index in the ArrayList of times
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -151,38 +162,57 @@ public class MainActivity extends AppCompatActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    // A prompt that asks for the name of the runner via text entry
+    // Has an "OK" and "Cancel" option
+    // If the name entered is empty, cancels and displays a toast
+    // Otherwise, calls showAlert to ask for the ID number next
+    // Parameter represents the index of the time that was tapped to produce
+    // this dialog
     public void namePrompt(final int timeTapped) {
+
+        // Set up dialog
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Input Runner Name");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         alert.setView(input);
 
+        // Positive button, to submit name
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final String nameInput = input.getText().toString();
                 name = nameInput;
+
+                // If the name is empty, display a toast and do nothing else
                 if(name.isEmpty()) {
                     nameEmpty();
-                } else {
+                }
+                // Otherwise, call the prompt for an ID number
+                else {
                     showAlert(timeTapped);
                 }
             }
         });
 
+        // Negative button, to cancel out
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                name = null;
+                name = "";
                 dialog.cancel();
             }
         });
         alert.show();
     }
 
+
+    // Prompt for ID number.  Has two options, 5K and 10K
+    // Both submit a time for their respective race, but dialog can still be canceled using
+    // the Android back button
     public void showAlert(final int timeTapped) {
 
+        // Build dialog
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Input ID");
         final EditText input = new EditText(this);
