@@ -131,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
                 ListElementsArrayList.clear();
 
                 adapter.notifyDataSetChanged();
+
+                ids = "";
             }
         });
 
@@ -271,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // Send the time that was tapped
                         myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
-                        myRef.setValue("00" + ListElementsArrayList.get(timeTapped));
+                        myRef.setValue("00:" + ListElementsArrayList.get(timeTapped));
 
                         // Send the name that was entered
                         myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
@@ -327,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                         myRef.setValue("" + idInput);
 
                         myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
-                        myRef.setValue("00" + ListElementsArrayList.get(timeTapped));
+                        myRef.setValue("00:" + ListElementsArrayList.get(timeTapped));
 
                         myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
                         myRef.setValue(name);
