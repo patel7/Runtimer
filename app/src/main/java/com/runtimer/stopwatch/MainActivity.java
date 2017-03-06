@@ -32,23 +32,18 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     TextView textView;
-
     Button start, pause, reset, lap;
-
     long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L;
-
     Handler handler;
-
     int Seconds, Minutes, MilliSeconds;
 
     ListView listView;
-
     String[] ListElements = new String[]{};
 
     String ids = "";
+    String name;
 
     List<String> ListElementsArrayList;
-
     ArrayAdapter<String> adapter;
 
     boolean alreadyExists;
@@ -146,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Test to ensure correct
                 // System.out.println(ListElementsArrayList.get(position));
-                showAlert(position);
+                namePrompt(position);
 
             }
         });
@@ -156,9 +151,38 @@ public class MainActivity extends AppCompatActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    public void namePrompt(final int timeTapped) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Input Runner Name");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        alert.setView(input);
 
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final String nameInput = input.getText().toString();
+                name = nameInput;
+                if(name == null) {
+                    nameEmpty();
+                } else {
+                    showAlert(timeTapped);
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                name = null;
+                dialog.cancel();
+            }
+        });
+        alert.show();
+    }
 
     public void showAlert(final int timeTapped) {
+
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Input ID");
         final EditText input = new EditText(this);
@@ -168,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
         alert.setPositiveButton("10K", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 final String idInput = input.getText().toString();
 
                 if(ListElementsArrayList.get(timeTapped).contains("✓")) {
@@ -188,10 +213,7 @@ public class MainActivity extends AppCompatActivity {
                 if (ids.contains("ID=" + idInput + ","))
                 {
                     // Show a toast indicating that a duplicate ID was entered
-                    Context context = getApplicationContext();
-                    CharSequence text = "ID already entered";
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast.makeText(context, text, duration).show();
+                    duplicateIDToast();
 
                     System.out.println("THE ID ALREADY EXISTS BRO.");
                     alreadyExists = true;
@@ -209,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                     myRef.setValue("00" + ListElementsArrayList.get(timeTapped));
 
                     myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
-                    myRef.setValue("Name " + idInput);
+                    myRef.setValue(name);
 
                     myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
                     myRef.setValue("10kRace");
@@ -242,10 +264,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (ids.contains("ID=" + idInput + ","))
                 {
-                    Context context = getApplicationContext();
-                    CharSequence text = "ID already entered";
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast.makeText(context, text, duration).show();
+                    duplicateIDToast();
 
                     System.out.println("THE ID ALREADY EXISTS BRO.");
                     alreadyExists = true;
@@ -261,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
                     myRef.setValue("00" + ListElementsArrayList.get(timeTapped));
 
                     myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
-                    myRef.setValue("Name " + idInput);
+                    myRef.setValue(name);
 
                     myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
                     myRef.setValue("10kRace");
@@ -272,6 +291,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         alert.show();
+    }
+
+    public void duplicateIDToast() {
+        Context context = getApplicationContext();
+        CharSequence text = "ID already entered";
+        int duration = Toast.LENGTH_SHORT;
+        Toast.makeText(context, text, duration).show();
+    }
+
+    public void nameEmpty() {
+        Context context = getApplicationContext();
+        CharSequence text = "Name cannot be empty";
+        int duration = Toast.LENGTH_SHORT;
+        Toast.makeText(context, text, duration).show();
     }
 
     public Runnable runnable = new Runnable() {
