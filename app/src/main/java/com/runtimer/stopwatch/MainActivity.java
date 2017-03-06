@@ -195,9 +195,13 @@ public class MainActivity extends AppCompatActivity {
 
                 final String idInput = input.getText().toString();
 
+                boolean wasSent;
                 if(ListElementsArrayList.get(timeTapped).contains("✓")) {
                     String newTime = ListElementsArrayList.get(timeTapped).substring(0,ListElementsArrayList.get(timeTapped).length() - 3);
                     ListElementsArrayList.set(timeTapped,newTime);
+                    wasSent = true;
+                } else {
+                    wasSent = false;
                 }
 
                 // Console print for testing, to be removed
@@ -210,20 +214,14 @@ public class MainActivity extends AppCompatActivity {
 
                 alreadyExists = false;
 
-                if (ids.contains("ID=" + idInput + ","))
-                {
+                if (ids.contains("ID=" + idInput + ",")) {
                     // Show a toast indicating that a duplicate ID was entered
                     duplicateIDToast();
 
                     System.out.println("THE ID ALREADY EXISTS BRO.");
                     alreadyExists = true;
-
-
                 }
-                else
-                {
-                    System.out.println("ID Number " + idInput + " doesn't exist!");
-
+                else {
                     myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
                     myRef.setValue("" + idInput);
 
@@ -240,9 +238,11 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println("THE IDS IS: " + ids);
                 }
 
-                String newTime = ListElementsArrayList.get(timeTapped) + "  ✓";
-                ListElementsArrayList.set(timeTapped, newTime);
-                adapter.notifyDataSetChanged();
+                if(wasSent) {
+                    String newTime = ListElementsArrayList.get(timeTapped) + "  ✓";
+                    ListElementsArrayList.set(timeTapped, newTime);
+                    adapter.notifyDataSetChanged();
+                }
             }
         });
 
@@ -252,6 +252,15 @@ public class MainActivity extends AppCompatActivity {
 
                 final String idInput = input.getText().toString();
 
+                boolean wasSent;
+                if(ListElementsArrayList.get(timeTapped).contains("✓")) {
+                    String newTime = ListElementsArrayList.get(timeTapped).substring(0,ListElementsArrayList.get(timeTapped).length() - 3);
+                    ListElementsArrayList.set(timeTapped,newTime);
+                    wasSent = true;
+                } else {
+                    wasSent = false;
+                }
+
                 // Console print for testing, to be removed
                 System.out.println(ListElementsArrayList.get(timeTapped) + " " + idInput);
 
@@ -271,8 +280,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    System.out.println("ID Number " + idInput + " doesn't exist!");
-
                     myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
                     myRef.setValue("" + idInput);
 
@@ -283,10 +290,15 @@ public class MainActivity extends AppCompatActivity {
                     myRef.setValue(name);
 
                     myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
-                    myRef.setValue("10kRace");
+                    myRef.setValue("5kRace");
 
                     ids += "ID=" + idInput + ",";
                     System.out.println("THE IDS IS: " + ids);
+                }
+                if(wasSent) {
+                    String newTime = ListElementsArrayList.get(timeTapped) + "  ✓";
+                    ListElementsArrayList.set(timeTapped, newTime);
+                    adapter.notifyDataSetChanged();
                 }
             }
         });
