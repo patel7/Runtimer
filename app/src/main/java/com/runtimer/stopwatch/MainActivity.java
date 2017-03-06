@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up dialog
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        // Dialog title
         alert.setTitle("Input Runner Name");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -212,22 +213,31 @@ public class MainActivity extends AppCompatActivity {
     // the Android back button
     public void showAlert(final int timeTapped) {
 
-        // Build dialog
+        // Set up dialog
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        // Dialog title
         alert.setTitle("Input ID");
         final EditText input = new EditText(this);
+        // Set up for numerical entry via virtual numpad only
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
         alert.setView(input);
 
+        // Listener for 10K button
         alert.setPositiveButton("10K", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
+                // Get number that was entered
                 final String idInput = input.getText().toString();
 
+                // If the ID input is empty, display a toast and do nothing else
                 if(idInput.isEmpty()) {
                     idEmpty();
                 } else {
+
+                    // Check if the time already has a checkmark at the end
+                    // Sets a boolean according to whether it does or not, and if it does,
+                    // removes the checkmark and trailing spaces
                     boolean wasSent;
                     if(ListElementsArrayList.get(timeTapped).contains("✓")) {
                         String newTime = ListElementsArrayList.get(timeTapped).substring(0,ListElementsArrayList.get(timeTapped).length() - 3);
@@ -237,40 +247,53 @@ public class MainActivity extends AppCompatActivity {
                         wasSent = false;
                     }
 
+                    // Set up database references
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef;
 
-                    DatabaseReference myRef = database.getReference("/Year/" + "2016/");
-                    System.out.println("THE KEY IS: " + myRef.getDatabase().getReference().child("ID/").getKey());
-
-                    alreadyExists = false;
-
+                    // Check local memory to see if ID entered was already sent from this phone
                     if (ids.contains("ID=" + idInput + ",")) {
 
+                        // If so, display a toast
                         duplicateIDToast();
 
+                        // Restore the checkmark to the time if it had one when it was tapped
                         if(wasSent) {
                             checkMark(timeTapped);
                         }
+
                     } else {
+                        //If the ID entered was not a duplicate, send all the data to the database
+
+                        // Send the ID entered
                         myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/ID");
                         myRef.setValue("" + idInput);
 
+                        // Send the time that was tapped
                         myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Time");
                         myRef.setValue("00" + ListElementsArrayList.get(timeTapped));
 
+                        // Send the name that was entered
                         myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/Name");
                         myRef.setValue(name);
 
+                        // Send the type of race that was picked
                         myRef = database.getReference("/Year/" + "2016/" + "ID/" + idInput + "/RaceType");
                         myRef.setValue("10kRace");
 
+                        // Add the ID that was entered to the local list of IDs
                         ids += "ID=" + idInput + ",";
+
+                        // Add a checkmark to the end of the time
                         checkMark(timeTapped);
                     }
                 }
             }
         });
 
+        // Listener for 5K button. Almost identical to 10K button, but code is separate in case
+        // database is reformatted/separated in future, in which case the 5K and 10K may have to be
+        // handled very differently
         alert.setNegativeButton("5K", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -291,11 +314,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-                    DatabaseReference myRef = database.getReference("/Year/" + "2016/");
-                    System.out.println("THE KEY IS: " + myRef.getDatabase().getReference().child("ID/").getKey());
-
-                    alreadyExists = false;
+                    DatabaseReference myRef;
 
                     if (ids.contains("ID=" + idInput + ",")) {
                         duplicateIDToast();
@@ -327,12 +346,16 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
+    // Add a checkmark to the end of one of the times on the list of times, and update the adapter
+    // so the checkmark is immediately visible.
+    // Takes in the index of the time to add a checkmark to as a parameter
     public void checkMark(int timeTapped) {
         String newTime = ListElementsArrayList.get(timeTapped) + "  ✓";
         ListElementsArrayList.set(timeTapped, newTime);
         adapter.notifyDataSetChanged();
     }
 
+    // Displays a toast indicating that the ID entered has already been entered before
     public void duplicateIDToast() {
         Context context = getApplicationContext();
         CharSequence text = "ID already entered";
@@ -340,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(context, text, duration).show();
     }
 
+    // Displays a toast warning the user that they cannot leave the name empty
     public void nameEmpty() {
         Context context = getApplicationContext();
         CharSequence text = "Name cannot be empty";
@@ -347,6 +371,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(context, text, duration).show();
     }
 
+    // Displays a toast warning the user that they cannot leave the ID empty
     public void idEmpty() {
         Context context = getApplicationContext();
         CharSequence text = "ID cannot be empty";
@@ -354,6 +379,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(context, text, duration).show();
     }
 
+    // Runs the timer
     public Runnable runnable = new Runnable() {
 
         public void run() {
